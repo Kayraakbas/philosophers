@@ -22,6 +22,8 @@ SRCS_SRC = philo_utils.c \
 		   ft_strdup.c \
 		   ft_strlen.c \
 		   arg_check_utils.c \
+		   monitor_thread_utils.c \
+		   philo_state_utils.c \
 
 MAIN_SRCS = $(addprefix $(SRC_PATH), $(SRC))
 UTILS_SRCS = $(addprefix $(SRCS_PATH), $(SRCS_SRC))

@@ -27,6 +27,10 @@ typedef struct s_resources
     int time_to_sleep;
     int num_of_each_philos_must_eat;
     pthread_mutex_t *locks;
+    pthread_mutex_t print_mutex;
+    pthread_mutex_t death_mutex;
+    bool simulation_ended;
+    struct s_philo *philos; // Reference to philosopher array
 } t_resources;
 
 
@@ -36,7 +40,10 @@ typedef struct s_philo
     pthread_t thread;
     pthread_mutex_t *left;
     pthread_mutex_t *right;
+    pthread_mutex_t meal_mutex;
     t_resources *resources;
+    long last_meal_time;
+    int meals_eaten;
 } t_philo;
 
 long long   ft_atoll(const char *str);
@@ -56,12 +63,15 @@ void *philo_starter(void *arg);
 t_resources init_resources(t_args args);
 bool check_arguments(int ac, char **argv);
 bool  check_overflow(char **argv);
-t_args convert_args_to_int(char **argv);
+t_args convert_args_to_int(char **argv, int ac);
 void *time_to_eat(void *arg);
 void *time_to_sleep(void *arg);
 void *time_to_think(void *arg);
 long get_time_ms(void);
-
-
-
+void *death_monitor(void *arg);
+void acquire_forks(t_philo *philo);
+void release_forks(t_philo *philo);
+void meal_monitor(t_philo *philos);
+void time_monitor (t_philo *philos);
+bool is_sim_ended(t_philo *philo);
 #endif

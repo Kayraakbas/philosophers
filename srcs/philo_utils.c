@@ -1,5 +1,5 @@
 #include "philo.h"
-// TO-DO implement free function for mutex arr
+
 pthread_mutex_t *create_mutex_arr(int num_of_forks)
 {
     int i;
@@ -17,9 +17,6 @@ pthread_mutex_t *create_mutex_arr(int num_of_forks)
     }
     return locks;
 }
-void *time_to_eat(void *arg){(void) arg;return NULL;}
-void *time_to_sleep(void *arg){(void) arg; return NULL;}
-void *time_to_think(void *arg){(void) arg; return NULL;}
 
 long get_time_ms(void)
 {
@@ -29,52 +26,26 @@ long get_time_ms(void)
     return (time.tv_sec * 1000) + (time.tv_usec / 1000);
 }
 
+bool is_sim_ended(t_philo *philo)
+{
+    bool result;
+    pthread_mutex_lock(&philo->resources->death_mutex);
+    result = philo->resources->simulation_ended;
+    pthread_mutex_unlock(&philo->resources->death_mutex);
+    return result;
+}
+
 void *philo_starter(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
-    long current_time;
     
-    while (1) // Continuous simulation loop
-    {
-        // THINKING
-        current_time = get_time_ms();
-        printf("%ld %d is thinking\n", current_time - philo->resources->start_time, philo->id);
-        
-        // ACQUIRE FORKS (avoid deadlock)
-        if (philo->id % 2 == 0)
-        {
-            pthread_mutex_lock(philo->left);
-            current_time = get_time_ms();
-            printf("%ld %d has taken a fork\n", current_time - philo->resources->start_time, philo->id);
-            
-            pthread_mutex_lock(philo->right);
-            current_time = get_time_ms();
-            printf("%ld %d has taken a fork\n", current_time - philo->resources->start_time, philo->id);
-        }
-        else
-        {
-            pthread_mutex_lock(philo->right);
-            current_time = get_time_ms();
-            printf("%ld %d has taken a fork\n", current_time - philo->resources->start_time, philo->id);
-            
-            pthread_mutex_lock(philo->left);
-            current_time = get_time_ms();
-            printf("%ld %d has taken a fork\n", current_time - philo->resources->start_time, philo->id);
-        }
-        
-        // EATING
-        current_time = get_time_ms();
-        printf("%ld %d is eating\n", current_time - philo->resources->start_time, philo->id);
-        usleep(philo->resources->time_to_eat * 1000); // Convert ms to microseconds
-        
-        // RELEASE FORKS
-        pthread_mutex_unlock(philo->left);
-        pthread_mutex_unlock(philo->right);
-        
-        // SLEEPING
-        current_time = get_time_ms();
-        printf("%ld %d is sleeping\n", current_time - philo->resources->start_time, philo->id);
-        usleep(philo->resources->time_to_sleep * 1000);
+    while (!is_sim_ended(philo))
+    {   
+        acquire_forks(philo);
+        time_to_eat(philo);
+        release_forks(philo);
+        time_to_sleep(philo);
+        time_to_think(philo); 
     }
     return NULL;
 }
@@ -85,7 +56,10 @@ void set_philo(t_philo *philo, int id, pthread_mutex_t *forks, int num_of_philos
     philo->left = &forks[id];
     philo->right = &forks[(id + 1) % num_of_philos];
     philo->resources = resources;
+    philo->meals_eaten = 0;
+    philo->last_meal_time = get_time_ms(); // Initialize last meal time
     pthread_create(&philo->thread, NULL, philo_starter, (void*)philo);
+    pthread_mutex_init(&philo->meal_mutex, NULL);
 }
 
 t_philo *create_philo_arr(int num_of_philos, pthread_mutex_t *forks, t_resources *resources)
