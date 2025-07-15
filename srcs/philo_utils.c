@@ -15,50 +15,96 @@ pthread_mutex_t *create_mutex_arr(int num_of_forks)
         pthread_mutex_init(&locks[i], NULL);
         i++;
     }
-    
     return locks;
 }
-void *philo_starter(int id)
+void *time_to_eat(void *arg){(void) arg;return NULL;}
+void *time_to_sleep(void *arg){(void) arg; return NULL;}
+void *time_to_think(void *arg){(void) arg; return NULL;}
+
+long get_time_ms(void)
 {
-    printf("philosopher: %d started\n",id);
-    pthread_exit(NULL);
+    struct timeval time;
+    
+    gettimeofday(&time, NULL);
+    return (time.tv_sec * 1000) + (time.tv_usec / 1000);
+}
+
+void *philo_starter(void *arg)
+{
+    t_philo *philo = (t_philo *)arg;
+    long current_time;
+    
+    while (1) // Continuous simulation loop
+    {
+        // THINKING
+        current_time = get_time_ms();
+        printf("%ld %d is thinking\n", current_time - philo->resources->start_time, philo->id);
+        
+        // ACQUIRE FORKS (avoid deadlock)
+        if (philo->id % 2 == 0)
+        {
+            pthread_mutex_lock(philo->left);
+            current_time = get_time_ms();
+            printf("%ld %d has taken a fork\n", current_time - philo->resources->start_time, philo->id);
+            
+            pthread_mutex_lock(philo->right);
+            current_time = get_time_ms();
+            printf("%ld %d has taken a fork\n", current_time - philo->resources->start_time, philo->id);
+        }
+        else
+        {
+            pthread_mutex_lock(philo->right);
+            current_time = get_time_ms();
+            printf("%ld %d has taken a fork\n", current_time - philo->resources->start_time, philo->id);
+            
+            pthread_mutex_lock(philo->left);
+            current_time = get_time_ms();
+            printf("%ld %d has taken a fork\n", current_time - philo->resources->start_time, philo->id);
+        }
+        
+        // EATING
+        current_time = get_time_ms();
+        printf("%ld %d is eating\n", current_time - philo->resources->start_time, philo->id);
+        usleep(philo->resources->time_to_eat * 1000); // Convert ms to microseconds
+        
+        // RELEASE FORKS
+        pthread_mutex_unlock(philo->left);
+        pthread_mutex_unlock(philo->right);
+        
+        // SLEEPING
+        current_time = get_time_ms();
+        printf("%ld %d is sleeping\n", current_time - philo->resources->start_time, philo->id);
+        usleep(philo->resources->time_to_sleep * 1000);
+    }
     return NULL;
 }
 
-void set_philo(t_philo *philo, int id, pthread_mutex_t *forks)
+void set_philo(t_philo *philo, int id, pthread_mutex_t *forks, int num_of_philos, t_resources *resources)
 {
     philo->id = id;
     philo->left = &forks[id];
-    philo->right = &forks[id];
-    pthread_create(&philo->thread,NULL, philo_starter(philo->id), NULL);
+    philo->right = &forks[(id + 1) % num_of_philos];
+    philo->resources = resources;
+    pthread_create(&philo->thread, NULL, philo_starter, (void*)philo);
 }
 
-t_philo *create_philo_arr(int num_of_philos, pthread_mutex_t *forks)
+t_philo *create_philo_arr(int num_of_philos, pthread_mutex_t *forks, t_resources *resources)
 {
     t_philo *philos;
     int i;
     if (num_of_philos <= 0)
         return NULL;
 
-    philos = calloc((num_of_philos + 1),  sizeof(t_philo));
+    philos = malloc(num_of_philos * sizeof(t_philo));
+    if (!philos)
+        return NULL;
     i = 0;
-    while (&philos[i])
+    while (i < num_of_philos)
     {
-        set_philo(&philos[i], i, forks);
+        set_philo(&philos[i], i, forks, num_of_philos, resources);
         i++;
     }
     return philos;
 }
 
-t_resources init_resources(t_args args)
-{
-    t_resources resource;
 
-    resource.locks = create_mutex_arr(args.num_of_philos);
-    resource.time_to_eat = args.time_to_eat;
-    resource.time_to_sleep = args.time_to_sleep;
-    resource.time_to_die = args.time_to_die;
-    resource.num_of_each_philos_must_eat = args.num_of_each_philos_must_eat;
-
-    return resource;
-}

@@ -24,50 +24,33 @@ void* myThreadFunc(void* arg) {
     return NULL;
 }*/
 
-bool  check_overflow(char **argv)
-{
-    int i;
-    i = 1;
-    while (argv[i])
-    {
-        if(ft_atoll(argv[i]) > INT_MAX)
-            return false;
-        i++;
-    }   
-    return true;
-}
-
-t_args convert_args_to_int(char **argv)
-{
-    t_args params;
-    if(!argv || !*argv)
-        exit(1);
-    if (check_overflow(argv) == false)
-    {
-        printf("overflow error;\n");
-        exit(1);
-    }
-    params.num_of_philos = (int) atoll(argv[1]);
-    params.time_to_die = (int) atoll(argv[2]);
-    params.time_to_eat = (int) atoll(argv[3]);
-    params.time_to_sleep = (int) atoll(argv[4]);
-    params.num_of_each_philos_must_eat = (int) atoll(argv[5]);
-
-    return params;
-}
-
 int main(int argc, char **argv)
 {
     t_args params;
     t_resources resources;
+    pthread_mutex_t *forks;
+    t_philo *philo_arr;
     
     if (check_arguments(argc, argv) == false)
         exit(1);
-    
     params = convert_args_to_int(argv);
     resources =  init_resources(params);
     printf("params :\n %d\n %d\n %d\n %d\n",resources.num_of_each_philos_must_eat, resources.time_to_die, resources.time_to_eat, resources.time_to_sleep);
+    
+    forks = create_mutex_arr(resources.num_of_philos);
+    // start simulation
+    if (!forks)
+    {
+        printf("forks not been initialized");
+    }
+    philo_arr = create_philo_arr(resources.num_of_philos, forks, &resources);
+    if (!philo_arr)
+    {
+        printf("philos not been initialized");
+    }
 
+    free(philo_arr);
+    free(forks);
 
     //input argumnents being taken correctly,
     //next steps will be creating forks and philos based on the params,

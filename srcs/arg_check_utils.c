@@ -38,3 +38,50 @@ bool check_arguments(int ac, char **argv)
     //convert the string to integer
     return true;
 }
+
+
+bool  check_overflow(char **argv)
+{
+    int i;
+    i = 1;
+    while (argv[i])
+    {
+        if(ft_atoll(argv[i]) > INT_MAX)
+            return false;
+        i++;
+    }   
+    return true;
+}
+
+t_args convert_args_to_int(char **argv)
+{
+    t_args params;
+    if(!argv || !*argv)
+        exit(1);
+    if (check_overflow(argv) == false)
+    {
+        printf("overflow error;\n");
+        exit(1);
+    }
+    params.num_of_philos = (int) atoll(argv[1]);
+    params.time_to_die = (int) atoll(argv[2]);
+    params.time_to_eat = (int) atoll(argv[3]);
+    params.time_to_sleep = (int) atoll(argv[4]);
+    params.num_of_each_philos_must_eat = (int) atoll(argv[5]);
+
+    return params;
+}
+t_resources init_resources(t_args args)
+{
+    t_resources resource;
+    resource.start_time = get_time_ms();
+    resource.num_of_philos = args.num_of_philos;
+    resource.locks = create_mutex_arr(args.num_of_philos);
+    resource.time_to_eat = args.time_to_eat;
+    resource.time_to_sleep = args.time_to_sleep;
+    resource.time_to_die = args.time_to_die;
+    resource.num_of_each_philos_must_eat = args.num_of_each_philos_must_eat;
+
+    return resource;
+}
+

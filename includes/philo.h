@@ -20,6 +20,8 @@ typedef struct s_args
 
 typedef struct s_resources
 {
+    long start_time;
+    int num_of_philos;
     int time_to_die; 
     int time_to_eat;
     int time_to_sleep;
@@ -34,6 +36,7 @@ typedef struct s_philo
     pthread_t thread;
     pthread_mutex_t *left;
     pthread_mutex_t *right;
+    t_resources *resources;
 } t_philo;
 
 long long   ft_atoll(const char *str);
@@ -47,9 +50,18 @@ size_t	ft_strlen(const char *s);
 
 // Philosopher utility functions
 pthread_mutex_t *create_mutex_arr(int num_of_forks);
-void set_philo(t_philo *philo, int id, pthread_mutex_t *forks);
+t_philo *create_philo_arr(int num_of_philos, pthread_mutex_t *forks, t_resources *resources);
+void set_philo(t_philo *philo, int id, pthread_mutex_t *forks, int num_of_philos, t_resources *resources);
+void *philo_starter(void *arg);
 t_resources init_resources(t_args args);
 bool check_arguments(int ac, char **argv);
 bool  check_overflow(char **argv);
+t_args convert_args_to_int(char **argv);
+void *time_to_eat(void *arg);
+void *time_to_sleep(void *arg);
+void *time_to_think(void *arg);
+long get_time_ms(void);
+
+
 
 #endif
