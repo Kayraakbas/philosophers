@@ -30,7 +30,7 @@ typedef struct s_resources
     pthread_mutex_t print_mutex;
     pthread_mutex_t death_mutex;
     bool simulation_ended;
-    struct s_philo *philos; // Reference to philosopher array
+    struct s_philo *philos;
 } t_resources;
 
 
@@ -74,4 +74,6 @@ void release_forks(t_philo *philo);
 void meal_monitor(t_philo *philos);
 void time_monitor (t_philo *philos);
 bool is_sim_ended(t_philo *philo);
+void safe_print(t_philo *philo, char *content);
+void safe_sleep(long sleep_timer);
 #endif

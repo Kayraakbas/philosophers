@@ -17,10 +17,8 @@ int main(int argc, char **argv)
     forks = create_mutex_arr(resources.num_of_philos);
     philo_arr = create_philo_arr(resources.num_of_philos, forks, &resources);
     resources.philos = philo_arr;
-
     pthread_create(&monitor_thread, NULL, death_monitor, &resources);
     
-    // Wait for all philosopher threads to finish
     int i = 0;
     while (i < resources.num_of_philos)
     {
@@ -28,8 +26,6 @@ int main(int argc, char **argv)
         i++;
     }
     
-    // Signal monitor to stop and wait for it
-    resources.simulation_ended = true;
     pthread_join(monitor_thread, NULL);
 
     free(philo_arr);

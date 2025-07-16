@@ -62,7 +62,7 @@ void *death_monitor(void *arg)
         time_monitor(philos);
         if (resources->num_of_each_philos_must_eat != -1)
             meal_monitor(philos);
-        usleep(1000);
+        safe_sleep(500);
     }
     return NULL;
 }

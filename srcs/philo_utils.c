@@ -18,22 +18,7 @@ pthread_mutex_t *create_mutex_arr(int num_of_forks)
     return locks;
 }
 
-long get_time_ms(void)
-{
-    struct timeval time;
-    
-    gettimeofday(&time, NULL);
-    return (time.tv_sec * 1000) + (time.tv_usec / 1000);
-}
 
-bool is_sim_ended(t_philo *philo)
-{
-    bool result;
-    pthread_mutex_lock(&philo->resources->death_mutex);
-    result = philo->resources->simulation_ended;
-    pthread_mutex_unlock(&philo->resources->death_mutex);
-    return result;
-}
 
 void *philo_starter(void *arg)
 {
@@ -45,7 +30,7 @@ void *philo_starter(void *arg)
         time_to_eat(philo);
         release_forks(philo);
         time_to_sleep(philo);
-        time_to_think(philo); 
+        time_to_think(philo);
     }
     return NULL;
 }
@@ -57,7 +42,7 @@ void set_philo(t_philo *philo, int id, pthread_mutex_t *forks, int num_of_philos
     philo->right = &forks[(id + 1) % num_of_philos];
     philo->resources = resources;
     philo->meals_eaten = 0;
-    philo->last_meal_time = get_time_ms(); // Initialize last meal time
+    philo->last_meal_time = get_time_ms();
     pthread_create(&philo->thread, NULL, philo_starter, (void*)philo);
     pthread_mutex_init(&philo->meal_mutex, NULL);
 }

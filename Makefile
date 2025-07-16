@@ -1,7 +1,7 @@
 NAME = philo
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g -fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -g
 LDFLAGS = -pthread
 RM = rm -f
 
@@ -24,6 +24,7 @@ SRCS_SRC = philo_utils.c \
 		   arg_check_utils.c \
 		   monitor_thread_utils.c \
 		   philo_state_utils.c \
+		   lock_utils.c \
 
 MAIN_SRCS = $(addprefix $(SRC_PATH), $(SRC))
 UTILS_SRCS = $(addprefix $(SRCS_PATH), $(SRCS_SRC))
