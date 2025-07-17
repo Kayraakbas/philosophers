@@ -6,7 +6,7 @@ pthread_mutex_t *create_mutex_arr(int num_of_forks)
     pthread_mutex_t *locks;
     if(num_of_forks <= 0)
         return NULL;
-    locks = calloc(num_of_forks, sizeof(pthread_mutex_t));
+    locks = ft_calloc(num_of_forks, sizeof(pthread_mutex_t));
     i = 0;
     if(!locks)
         return NULL;
@@ -17,8 +17,6 @@ pthread_mutex_t *create_mutex_arr(int num_of_forks)
     }
     return locks;
 }
-
-
 
 void *philo_starter(void *arg)
 {
@@ -65,5 +63,3 @@ t_philo *create_philo_arr(int num_of_philos, pthread_mutex_t *forks, t_resources
     }
     return philos;
 }
-
-

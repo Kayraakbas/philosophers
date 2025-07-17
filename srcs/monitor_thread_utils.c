@@ -1,21 +1,42 @@
 #include "philo.h"
 
+bool safe_check_philo_death(t_philo *philo)
+{
+    long current_time;
+    long last_meal;
+    bool is_dead;
+    
+    current_time = get_time_ms();
+    
+    pthread_mutex_lock(&philo->meal_mutex);
+    last_meal = philo->last_meal_time;
+    is_dead = (current_time - last_meal > philo->resources->time_to_die);
+    pthread_mutex_unlock(&philo->meal_mutex);
+    return is_dead;
+}
+
+bool safe_check_is_meal_finished(t_philo *philo)
+{
+    bool meal_finished;
+    
+    pthread_mutex_lock(&philo->meal_mutex);
+    meal_finished = (philo->meals_eaten >= philo->resources->num_of_each_philos_must_eat);
+    pthread_mutex_unlock(&philo->meal_mutex);
+
+    return meal_finished;
+}
+
 void time_monitor (t_philo *philos)
 {
     int i;
-    long current_time;
     t_resources *resources = philos->resources; 
     i = 0;
 
     while (i < resources->num_of_philos)
     {
-        current_time = get_time_ms();            
-        if (current_time - philos[i].last_meal_time > resources->time_to_die)
-        {
-            pthread_mutex_lock(&resources->print_mutex);
-            printf("%ld %d died (time monitor)\n", current_time - resources->start_time, philos[i].id);
-            pthread_mutex_unlock(&resources->print_mutex);
-                
+        if (safe_check_philo_death(&philos[i]))
+        {  
+            safe_print(&philos[i], "died(time monitor)");
             pthread_mutex_lock(&resources->death_mutex);
             resources->simulation_ended = true;
             pthread_mutex_unlock(&resources->death_mutex);
@@ -24,6 +45,7 @@ void time_monitor (t_philo *philos)
         i++;
     }
 }
+
 
 void meal_monitor(t_philo *philos)
 {
@@ -36,15 +58,13 @@ void meal_monitor(t_philo *philos)
     while (i < philos->resources->num_of_philos)
     {
         if (philos[i].resources->num_of_each_philos_must_eat > 0 && 
-         philos[i].meals_eaten >= philos[i].resources->num_of_each_philos_must_eat)
+         safe_check_is_meal_finished(&philos[i]))
             count++;
-        i++;
+        i++; 
     }
     if (count == resources->num_of_philos)
     {
-        pthread_mutex_lock(&resources->print_mutex);
-        printf("%ld %d died meal monitor\n", get_time_ms() - resources->start_time, philos[i].id);
-        pthread_mutex_unlock(&resources->print_mutex);
+        safe_print(philos, "meals have been finished");
         pthread_mutex_lock(&resources->death_mutex);
         resources->simulation_ended = true;
         pthread_mutex_unlock(&resources->death_mutex);
@@ -58,7 +78,7 @@ void *death_monitor(void *arg)
     t_philo *philos = resources->philos;
 
     while (!is_sim_ended(philos))
-    {
+    {        
         time_monitor(philos);
         if (resources->num_of_each_philos_must_eat != -1)
             meal_monitor(philos);

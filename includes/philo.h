@@ -48,24 +48,19 @@ typedef struct s_philo
 
 long long   ft_atoll(const char *str);
 void        *ft_calloc(size_t count, size_t size);
-int	ft_isalnum(int c);
-int	ft_isalpha(int c);
-int	ft_isdigit(int c);
-char	*ft_strchr(const char *s, int c);
-char	*ft_strdup(const char *s1);
-size_t	ft_strlen(const char *s);
+int	        ft_isdigit(int c);
 
-// Philosopher utility functions
+
 pthread_mutex_t *create_mutex_arr(int num_of_forks);
-t_philo *create_philo_arr(int num_of_philos, pthread_mutex_t *forks, t_resources *resources);
-void set_philo(t_philo *philo, int id, pthread_mutex_t *forks, int num_of_philos, t_resources *resources);
-void *philo_starter(void *arg);
-t_resources init_resources(t_args args);
-bool check_arguments(int ac, char **argv);
-bool  check_overflow(char **argv);
-t_args convert_args_to_int(char **argv, int ac);
-void *time_to_eat(void *arg);
-void *time_to_sleep(void *arg);
+t_philo         *create_philo_arr(int num_of_philos, pthread_mutex_t *forks, t_resources *resources);
+void            set_philo(t_philo *philo, int id, pthread_mutex_t *forks, int num_of_philos, t_resources *resources);
+void            *philo_starter(void *arg);
+t_resources     init_resources(t_args args);
+bool            check_arguments(int ac, char **argv);
+bool            check_overflow(char **argv);
+t_args          convert_args_to_int(char **argv, int ac);
+void            *time_to_eat(void *arg);
+void            *time_to_sleep(void *arg);
 void *time_to_think(void *arg);
 long get_time_ms(void);
 void *death_monitor(void *arg);
@@ -76,4 +71,7 @@ void time_monitor (t_philo *philos);
 bool is_sim_ended(t_philo *philo);
 void safe_print(t_philo *philo, char *content);
 void safe_sleep(long sleep_timer);
+void safe_free_all(t_resources resources);
+bool safe_check_philo_death(t_philo *philo);
+bool safe_check_is_meal_finished(t_philo *philo);
 #endif

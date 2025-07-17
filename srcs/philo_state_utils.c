@@ -27,45 +27,27 @@ void release_forks(t_philo *philo)
 void *time_to_eat(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
-    long current_time;
     
-    current_time = get_time_ms();
-    pthread_mutex_lock(&philo->resources->print_mutex);
-    printf("%ld %d is eating\n", current_time - philo->resources->start_time, philo->id);
-    pthread_mutex_unlock(&philo->resources->print_mutex);
-    
+    safe_print(philo, "is eating");
     pthread_mutex_lock(&philo->meal_mutex);
     philo->meals_eaten++;
     philo->last_meal_time = get_time_ms();
     pthread_mutex_unlock(&philo->meal_mutex);
     safe_sleep(philo->resources->time_to_eat);
-
     return NULL;
 }
 
 void *time_to_sleep(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
-    long current_time;
-    
-    current_time = get_time_ms();
-    pthread_mutex_lock(&philo->resources->print_mutex); 
-    printf("%ld %d is sleeping\n", current_time - philo->resources->start_time, philo->id);
-    pthread_mutex_unlock(&philo->resources->print_mutex); 
+    safe_print(philo, "is sleeping"); 
     safe_sleep(philo->resources->time_to_sleep);
-    
     return NULL;
 }
 
 void *time_to_think(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
-    long current_time;
-    
-    current_time = get_time_ms();
-    pthread_mutex_lock(&philo->resources->print_mutex);
-    printf("%ld %d is thinking\n", current_time - philo->resources->start_time, philo->id);
-    pthread_mutex_unlock(&philo->resources->print_mutex);
-
+    safe_print(philo, "is thinking");
     return NULL;
 }
