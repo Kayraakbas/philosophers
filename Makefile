@@ -1,7 +1,7 @@
 NAME = philo
 
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -pthread
 RM = rm -f
 
@@ -14,7 +14,6 @@ SRC = 	philo.c
 
 SRCS_SRC = philo_utils.c \
 		   ft_atoll.c \
-		   ft_calloc.c \
 		   ft_isdigit.c \
 		   arg_check_utils.c \
 		   monitor_thread_utils.c \
