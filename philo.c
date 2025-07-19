@@ -3,14 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakbas <omakbas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kayraakbas <kayraakbas@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:00:00 by omakbas           #+#    #+#             */
-/*   Updated: 2025/07/18 17:46:40 by omakbas          ###   ########.fr       */
+/*   Updated: 2025/07/19 17:13:28 by kayraakbas       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static void handle_1_philo(t_philo philo, t_resources resources)
+{
+	safe_sleep(resources.time_to_die);
+	safe_print(&philo, "died");
+	safe_free_all(resources);
+	exit(1);
+}
 
 int	main(int argc, char **argv)
 {
@@ -27,6 +35,8 @@ int	main(int argc, char **argv)
 	philo_arr = create_philo_arr(resources.num_of_philos, &resources);
 	resources.philos = philo_arr;
 	pthread_create(&monitor_thread, NULL, death_monitor, &resources);
+	if (resources.num_of_philos == 1)
+		handle_1_philo(philo_arr[0], resources);
 	i = 0;
 	while (i < resources.num_of_philos)
 	{

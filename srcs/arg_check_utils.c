@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   arg_check_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakbas <omakbas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kayraakbas <kayraakbas@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:00:00 by omakbas           #+#    #+#             */
-/*   Updated: 2025/07/18 17:13:03 by omakbas          ###   ########.fr       */
+/*   Updated: 2025/07/19 17:15:36 by kayraakbas       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ bool	check_arguments(int ac, char **argv)
 	i = 1;
 	while (argv[i])
 	{
-		printf("arg %d: %s\n", i, argv[i]);
 		if (ft_int_check(argv[i]) == false)
 		{
 			printf("int check fault wrong arg: %d, %s\n", i, argv[i]);

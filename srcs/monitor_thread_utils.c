@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor_thread_utils.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakbas <omakbas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kayraakbas <kayraakbas@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:00:00 by omakbas           #+#    #+#             */
-/*   Updated: 2025/07/18 17:45:13 by omakbas          ###   ########.fr       */
+/*   Updated: 2025/07/19 17:14:51 by kayraakbas       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,11 @@ void	time_monitor(t_philo *philos)
 	{
 		if (safe_check_philo_death(&philos[i]))
 		{
-			safe_print(&philos[i], "died(time monitor)");
+			safe_print(&philos[i], "died");
 			pthread_mutex_lock(&resources->death_mutex);
 			resources->simulation_ended = true;
 			pthread_mutex_unlock(&resources->death_mutex);
-			return ;
+			break;
 		}
 		i++;
 	}
@@ -76,7 +76,7 @@ void	meal_monitor(t_philo *philos)
 	}
 	if (count == resources->num_of_philos)
 	{
-		safe_print(philos, "meals have been finished");
+		safe_print(philos, "meals finished");
 		pthread_mutex_lock(&resources->death_mutex);
 		resources->simulation_ended = true;
 		pthread_mutex_unlock(&resources->death_mutex);
@@ -96,7 +96,6 @@ void	*death_monitor(void *arg)
 		time_monitor(philos);
 		if (resources->num_of_each_philos_must_eat != -1)
 			meal_monitor(philos);
-		safe_sleep(500);
 	}
 	return (NULL);
 }
