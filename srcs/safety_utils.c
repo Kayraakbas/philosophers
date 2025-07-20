@@ -6,7 +6,7 @@
 /*   By: omakbas <omakbas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:00:00 by omakbas           #+#    #+#             */
-/*   Updated: 2025/07/18 00:00:00 by omakbas          ###   ########.fr       */
+/*   Updated: 2025/07/20 20:57:04 by omakbas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,30 +51,30 @@ void	safe_sleep(long sleep_timer)
 		usleep(10);
 }
 
-void	safe_free_all(t_resources resources)
+void	safe_free_all(t_resources *resources)
 {
 	int	i;
 
 	i = 0;
-	pthread_mutex_destroy(&resources.print_mutex);
-	pthread_mutex_destroy(&resources.death_mutex);
-	if (resources.locks)
+	pthread_mutex_destroy(&resources->print_mutex);
+	pthread_mutex_destroy(&resources->death_mutex);
+	if (resources->locks)
 	{
-		while (i < resources.num_of_philos)
+		while (i < resources->num_of_philos)
 		{
-			pthread_mutex_destroy(&resources.locks[i]);
+			pthread_mutex_destroy(&resources->locks[i]);
 			i++;
 		}
-		free(resources.locks);
+		free(resources->locks);
 	}
-	if (resources.philos)
+	if (resources->philos)
 	{
 		i = 0;
-		while (i < resources.num_of_philos)
+		while (i < resources->num_of_philos)
 		{
-			pthread_mutex_destroy(&resources.philos[i].meal_mutex);
+			pthread_mutex_destroy(&resources->philos[i].meal_mutex);
 			i++;
 		}
-		free(resources.philos);
+		free(resources->philos);
 	}
 }

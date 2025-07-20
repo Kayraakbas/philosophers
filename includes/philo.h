@@ -6,7 +6,7 @@
 /*   By: omakbas <omakbas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:00:00 by omakbas           #+#    #+#             */
-/*   Updated: 2025/07/18 00:00:00 by omakbas          ###   ########.fr       */
+/*   Updated: 2025/07/20 21:02:27 by omakbas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,10 @@ void			time_monitor(t_philo *philos);
 bool			is_sim_ended(t_philo *philo);
 void			safe_print(t_philo *philo, char *content);
 void			safe_sleep(long sleep_timer);
-void			safe_free_all(t_resources resources);
+void			safe_free_all(t_resources *resources);
 bool			safe_check_philo_death(t_philo *philo);
 bool			safe_check_is_meal_finished(t_philo *philo);
+void			join_philosopher_threads(t_resources *resources,
+					t_philo *philo_arr);
 
 #endif
