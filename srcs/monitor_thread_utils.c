@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor_thread_utils.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kayraakbas <kayraakbas@student.42.fr>      +#+  +:+       +#+        */
+/*   By: omakbas <omakbas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:00:00 by omakbas           #+#    #+#             */
-/*   Updated: 2025/07/19 17:14:51 by kayraakbas       ###   ########.fr       */
+/*   Updated: 2025/07/20 19:38:44 by omakbas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	time_monitor(t_philo *philos)
 			pthread_mutex_lock(&resources->death_mutex);
 			resources->simulation_ended = true;
 			pthread_mutex_unlock(&resources->death_mutex);
-			break;
+			break ;
 		}
 		i++;
 	}

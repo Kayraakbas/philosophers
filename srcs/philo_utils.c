@@ -6,7 +6,7 @@
 /*   By: omakbas <omakbas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:00:00 by omakbas           #+#    #+#             */
-/*   Updated: 2025/07/18 17:51:48 by omakbas          ###   ########.fr       */
+/*   Updated: 2025/07/20 19:36:54 by omakbas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ t_philo	*create_philo_arr(int num_of_philos, t_resources *resources)
 	while (i < num_of_philos)
 	{
 		pthread_create(&philos[i].thread, NULL, philo_starter,
-				(void *)&philos[i]);
+			(void *)&philos[i]);
 		i++;
 	}
 	return (philos);
